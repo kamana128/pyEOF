@@ -195,7 +195,7 @@ class CustomPCA(PCA):
                     self.explained_variance_
                 )[::-1]
 
-                total_var = self.n_features_
+                total_var = self.n_features_in_
                 self.explained_variance_ratio_ = (
                         self.explained_variance_ / total_var
                 )
@@ -203,16 +203,16 @@ class CustomPCA(PCA):
                 self.singular_values_ = None
 
                 if self._fit_svd_solver == 'full':
-                    if self.n_components_ < min(self.n_features_, self.n_samples_):
+                    if self.n_components_ < min(self.n_features_in_, self.n_samples_):
                         self.noise_variance_ = (
                             (total_var - self.explained_variance_.sum())
-                            / (self.n_features_ - self.n_components_)
+                            / (self.n_features_in_ - self.n_components_)
                         )
                     else:
                         self.noise_variance_ = 0.
 
                 elif self._fit_svd_solver in ['arpack', 'randomized']:
-                    if self.n_components_ < min(self.n_features_, self.n_samples_):
+                    if self.n_components_ < min(self.n_features_in_, self.n_samples_):
 
                         total_var = np.var(X, ddof=1, axis=0)
 
@@ -221,7 +221,7 @@ class CustomPCA(PCA):
                         )
 
                         self.noise_variance_ /= (
-                            min(self.n_features_, self.n_samples_)
+                            min(self.n_features_in_, self.n_samples_)
                             - self.n_components_
                         )
                     else:
@@ -299,7 +299,7 @@ class CustomPCA(PCA):
         else:
             self.noise_variance_ = 0.
 
-        self.n_samples_, self.n_features_ = n_samples, n_features
+        self.n_samples_, self.n_features_in_ = n_samples, n_features
         self.components_ = components_[:n_components]
         self.n_components_ = n_components
         self.explained_variance_ = explained_variance_[:n_components]
@@ -356,7 +356,7 @@ class CustomPCA(PCA):
         )
 
         if self.feature_selection == 'all':
-            mask = np.array([True] * self.n_features_)
+            mask = np.array([True] * self.n_features_in_)
 
         elif self.feature_selection == 'significant':
             mask = significant_features_mask
@@ -364,7 +364,7 @@ class CustomPCA(PCA):
         elif self.feature_selection == 'surrogate':
             # Select significant feature with maximum loading
             # on each principal component
-            mask = np.full(self.n_features_, False, dtype=bool)
+            mask = np.full(self.n_features_in_, False, dtype=bool)
             surrogate_features_idx = np.unique(
                 np.absolute(np.argmax(self.components_, axis=1))
             )
