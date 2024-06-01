@@ -79,7 +79,7 @@ class CustomPCA(PCA):
         super().__init__(**kws)
         self.rotation = rotation
         self.feature_selection = feature_selection
-        self.n_features_in_ = 100
+        self.n_features_in_ = 400
 
     @staticmethod
     def _df2mtr(df):
